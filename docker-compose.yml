@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:16
+    container_name: ecoach_db
+    environment:
+      POSTGRES_USER: ecoach
+      POSTGRES_PASSWORD: ecoach
+      POSTGRES_DB: ecoach
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  backend:
+    build: ./backend
+    container_name: ecoach_api
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
